@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const app = express();
 const encrypt = require("mongoose-encryption");
-const md5 = require("md5");
+const bcrypt = require("bcrypt");
 mongoose.connect("mongodb://localhost:27017/userDB");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -26,18 +26,21 @@ app.get("/register", (req, res) => {
   res.render("register");
 });
 app.post("/register", (req, res) => {
-  const newUser = new user({
-    em: req.body.username,
-    pwd: md5(req.body.password),
-  });
-  newUser.save((err) => {
-    if (!err) {
-      res.render("login");
-    } else {
-      res.send(err);
-    }
+  bcrypt.hash(req.body.password, 13, function (err, hash) {
+    const newUser = new user({
+      em: req.body.username,
+      pwd: hash,
+    });
+    newUser.save((err) => {
+      if (!err) {
+        res.render("login");
+      } else {
+        res.send(err);
+      }
+    });
   });
 });
+
 // <------------------------------------------------------->
 app.get("/login", (req, res) => {
   res.render("login");
@@ -47,9 +50,17 @@ app.post("/login", (req, res) => {
   user.findOne({ em: req.body.username }, (err, foundUser) => {
     if (!err) {
       if (foundUser) {
-        if (foundUser.pwd === md5(req.body.password)) {
-          res.render("secrets");
-        }
+        bcrypt.compare(
+          req.body.password,
+          foundUser.pwd,
+          function (err, result) {
+            if (result) {
+              res.render("secrets");
+            }else{
+              res.send("WRONG PASSWWORDDD!!!")
+            }
+          }
+        );
       }
     } else {
       console.log(err);
