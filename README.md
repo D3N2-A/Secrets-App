@@ -2,7 +2,7 @@
 
 Simple web application made while learning authentication and security.
 
-6 Levels of securitywas implemented starting from basic comparison of plain text from database to oAuth 2.0.
+6 Levels of securitywas implemented starting from basic comparison of plain text from database to OAuth 2.0 and Google authentication.
 
 
 
@@ -85,5 +85,41 @@ This method uses advanced hashing method bcrypt for hashing and salting multiple
   });
   ```
   
+  
+## Level 5 <sub>🍪</sub>
+![hs](https://img.shields.io/badge/Highly_Secure-100000?style=for-the-badge&logo=&logoColor=white&labelColor=FF0000&color=00FF00)
+
+>![NPM](https://img.shields.io/badge/NPM-%23000000.svg?style=for-the-badge&logo=npm&logoColor=white) (passport, passport-local-mongoose)
+
+This method uses passport js for authentication processes such as salting, hashing, registration, authentication and ending user session.
+
+```javascript
+> userSchema.plugin(passportLocalMongoose); 
+  //saltiing and hashing
+
+> user.register(
+    { username: req.body.username, active: false },
+    req.body.password,
+    function (err, user) {
+      if (err) {
+        console.log(err);
+        res.render("register");
+      } else {
+        passport.authenticate("local")(req, res, () => {
+          res.redirect("/secrets");
+        });
+      }
+    }
+  );
+
+  > req.login(user, function (err) {
+    if (err) {
+      console.log(err);
+      res.redirect("/login");
+    } else {
+      passport.authenticate("local")(req, res, () => {
+        res.redirect("/secrets");
+      });
+  ```
   
   
