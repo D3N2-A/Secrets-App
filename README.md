@@ -25,6 +25,16 @@ user.findOne({ em: req.body.username }, (err, foundUser) => {
   });
   ```
 
+## Level 2 
+![mv](https://img.shields.io/badge/Moderately_Vulnerable-100000?style=for-the-badge&logo=&logoColor=white&labelColor=FF0000&color=FFA500)
+
+This method mongoose-encryption to automatically encrypt and decrypt password and strores secret key in form of enviornment variable.
+
+```javascript
+userSchema.plugin(encrypt, { secret: secret, encryptedFields: ["pwd"] });
+  ```
+  
+
 ## Level 3 
 ![hv](https://img.shields.io/badge/Highly_Vulnerable-100000?style=for-the-badge&logo=&logoColor=white&labelColor=FF0000&color=F40000)
 
