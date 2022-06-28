@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -5,7 +6,8 @@ const app = express();
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
-
+const GoogleStrategy = require("passport-google-oauth2").Strategy;
+const findOrCreate = require("mongoose-findorcreate");
 app.use(
   session({
     secret: "thisisoursecret",
@@ -22,21 +24,56 @@ app.use(express.static("public"));
 app.set("view engine", "ejs");
 // <------------------------------------------------------->
 const userSchema = new mongoose.Schema({
+  googleId: String,
   username: String,
   password: String,
 });
 userSchema.plugin(passportLocalMongoose); //saltiing and hashing
+userSchema.plugin(findOrCreate);
 // <------------------------------------------------------->
 
 const user = mongoose.model("user", userSchema);
 passport.use(user.createStrategy());
-passport.serializeUser(user.serializeUser());
-passport.deserializeUser(user.deserializeUser());
+passport.serializeUser(function (user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function (user, done) {
+  done(null, user);
+});
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/secrets",
+      passReqToCallback: true,
+    },
+    function (request, accessToken, refreshToken, profile, done) {
+      console.log(profile);
+      user.findOrCreate({ googleId: profile.id }, function (err, user) {
+        return done(err, user);
+      });
+    }
+  )
+);
+
 // <------------------------------------------------------->
 app.get("/", (req, res) => {
   res.render("home");
 });
 
+app.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["email", "profile"] })
+);
+app.get(
+  "/auth/google/secrets",
+  passport.authenticate("google", {
+    successRedirect: "/secrets",
+    failureRedirect: "/login",
+  })
+);
 // <------------------------------------------------------->
 app.get("/register", (req, res) => {
   res.render("register");
@@ -89,9 +126,13 @@ app.post("/login", (req, res) => {
 
 // <------------------------------------------------------->
 
-app.post("/logout", function (req, res) {
-  req.logout();
-  res.redirect("/");
+app.get("/logout", function (req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
 });
 // <------------------------------------------------------->
 app.listen(process.env.PORT || 3000, () => {
