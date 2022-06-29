@@ -122,4 +122,43 @@ This method uses passport js for authentication processes such as salting, hashi
       });
   ```
   
+## Level 6 <sub>OAuth 2.0</sub>
+![hs](https://img.shields.io/badge/Highly_Secure-100000?style=for-the-badge&logo=&logoColor=white&labelColor=FF0000&color=00FF00)
+
+>![NPM](https://img.shields.io/badge/NPM-%23000000.svg?style=for-the-badge&logo=npm&logoColor=white) (passport,passport-google-oauth2, passport-local-mongoose ,mongoose-findorcreate)
+
+This method uses passport js for authentication processes such as salting, hashing, registration, authentication and ending user session.
+
+```javascript
+> passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/secrets",
+      passReqToCallback: true,
+    },
+    function (request, accessToken, refreshToken, profile, done) {
+      user.findOrCreate({ googleId: profile.id }, function (err, user) {
+        return done(err, user);
+      });
+    }
+  )
+);
+
+> const tr = new user({
+    username: req.body.username,
+    password: req.body.password,
+  });
+  req.login(tr, function (err) {
+    if (err) {
+      console.log(err);
+      res.redirect("/login");
+    } else {
+      passport.authenticate("local")(req, res, () => {
+        res.redirect("/secrets");
+      });
+    }
+  }); //login method
+  ```
   
