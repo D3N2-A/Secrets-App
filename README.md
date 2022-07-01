@@ -2,9 +2,24 @@
 
 Simple web application made while learning authentication and security.
 
-6 Levels of securitywas implemented starting from basic comparison of plain text from database to OAuth 2.0 and Google authentication.
+6 Levels of security were implemented starting from basic comparison of plain text from database to OAuth 2.0 and Google authentication.
 
+## Installation
+>![node](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)![NPM](https://img.shields.io/badge/NPM-%23000000.svg?style=for-the-badge&logo=npm&logoColor=white) ![mongo](	https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)![express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 
+Install my-project with npm<br>
+First make a local copy of the project <br>
+MongoDB server instance required running at **PORT : 27017**
+```bash
+  > Git CLI
+    gh repo clone D3N2-A/Secrets-App
+
+  > npm i 
+  cd /path
+
+  > mongod 
+  > nodemon app.js
+```
 
 ## Level 1 <sub>Plain text</sub>
 ![hv](https://img.shields.io/badge/Highly_Vulnerable-100000?style=for-the-badge&logo=&logoColor=white&labelColor=FF0000&color=F40000)
@@ -161,4 +176,8 @@ This method uses passport js for authentication processes such as salting, hashi
     }
   }); //login method
   ```
+  
+  ## Author
+
+- [@D3N2](https://www.github.com/D3N2-A)
   
